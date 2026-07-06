@@ -42,7 +42,7 @@ export default function InterfaceView() {
           onClick={() => setLightbox(src)}
           className="break-inside-avoid rounded-xl overflow-hidden border border-white/5 cursor-zoom-in">
           
-            <img src="https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/1f7ad7624_image.png" alt={`Interface screenshot ${i + 1}`} className="w-full h-auto block" loading="lazy" />
+            <img src="https://imgur.com/FkrQ6Un" alt={`Interface screenshot ${i + 1}`} className="w-full h-auto block" loading="lazy" />
           </motion.div>
         )}
       </div>
