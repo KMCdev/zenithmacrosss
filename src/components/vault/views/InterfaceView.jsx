@@ -7,19 +7,19 @@ import { X } from "lucide-react";
 // To change images: replace the URLs below with your own image URLs.
 // You can upload images to any image host (Imgur, Cloudinary, etc.) and paste the direct URL here.
 const IMAGES = [
-"https://imgur.com/FkrQ6Un",
-"https://imgur.com/EqjkcZq",
-// New images from the second batch:
-"https://imgur.com/hjsXCD5",
-"https://imgur.com/fr3tmRu",
-"https://imgur.com/UwA5xg1",
-"https://imgur.com/Tgm5Pwy",
-"https://imgur.com/tnTfjyJ",
-"https://imgur.com/5Tc8Tbq",
-"https://imgur.com/0yCnaS6",
-"https://imgur.com/DlWaEsl",
-"https://imgur.com/ljllqzg",
-"https://imgur.com/A5RbFHJ"];
+  "https://i.imgur.com/FkrQ6Un.png",
+  "https://i.imgur.com/EqjkcZq.png",
+  "https://i.imgur.com/hjsXCD5.png",
+  "https://i.imgur.com/fr3tmRu.png",
+  "https://i.imgur.com/UwA5xg1.png",
+  "https://i.imgur.com/Tgm5Pwy.png",
+  "https://i.imgur.com/tnTfjyJ.png",
+  "https://i.imgur.com/5Tc8Tbq.png",
+  "https://i.imgur.com/0yCnaS6.png",
+  "https://i.imgur.com/DlWaEsl.png",
+  "https://i.imgur.com/ljllqzg.png",
+  "https://i.imgur.com/A5RbFHJ.png"
+];
 
 export default function InterfaceView() {
   const [lightbox, setLightbox] = useState(null);
