@@ -7,18 +7,23 @@ import { X } from "lucide-react";
 // To change images: replace the URLs below with your own image URLs.
 // You can upload images to any image host (Imgur, Cloudinary, etc.) and paste the direct URL here.
 const IMAGES = [
-  "https://i.imgur.com/FkrQ6Un.png",
-  "https://i.imgur.com/EqjkcZq.png",
-  "https://i.imgur.com/hjsXCD5.png",
-  "https://i.imgur.com/fr3tmRu.png",
-  "https://i.imgur.com/UwA5xg1.png",
-  "https://i.imgur.com/Tgm5Pwy.png",
-  "https://i.imgur.com/tnTfjyJ.png",
-  "https://i.imgur.com/5Tc8Tbq.png",
-  "https://i.imgur.com/0yCnaS6.png",
-  "https://i.imgur.com/DlWaEsl.png",
-  "https://i.imgur.com/ljllqzg.png",
-  "https://i.imgur.com/A5RbFHJ.png"
+  "/123.png",
+  "/243.png",
+  "/eee.png",
+  "/hg.png",
+  "/hjhjh.png",
+  "/hrthrth.png",
+  "/iafmage.png",
+  "/imag55e.png",
+  "/image.png",
+  "/imagge.png",
+  "/lklk.png",
+  "/mnmnm.png",
+  "/thhty.png",
+  "/tr.png",
+  "/tretert.png",
+  "/tseterst.png",
+  "/uy.png"
 ];
 
 export default function InterfaceView() {
