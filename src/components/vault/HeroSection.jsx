@@ -4,7 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ExternalLink, CheckCircle, Shield } from "lucide-react";
 
-const HERO_IMAGE = "https://imgur.com/FkrQ6Un";
+const HERO_IMAGE = "/123";
 
 export default function HeroSection({ zenithComplete, onZenithClick }) {
   return (
