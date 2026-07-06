@@ -16,6 +16,7 @@ export default function Home() {
   const [user, setUser] = useState(null); // { username, email }
   const [view, setView] = useState("dashboard");
   const [showRegister, setShowRegister] = useState(false);
+  const [showRegisterMode, setShowRegisterMode] = useState("register");
   const [showDownload, setShowDownload] = useState(false);
 
   const handleRegisterSuccess = (userData) => {
@@ -23,7 +24,8 @@ export default function Home() {
     setShowRegister(false);
   };
 
-  const handleRegisterClick = () => setShowRegister(true);
+  const handleRegisterClick = () => { setShowRegisterMode("register"); setShowRegister(true); };
+  const handleLoginClick = () => { setShowRegisterMode("login"); setShowRegister(true); };
 
   const handleDownload = () => {
     if (!user) {
@@ -78,6 +80,7 @@ export default function Home() {
         currentView={view}
         onNavigate={setView}
         onRegisterClick={handleRegisterClick}
+        onLoginClick={handleLoginClick}
         user={user}
       />
 
@@ -96,6 +99,7 @@ export default function Home() {
         <RegisterModal
           onClose={() => setShowRegister(false)}
           onSuccess={handleRegisterSuccess}
+          defaultMode={showRegisterMode}
         />
       )}
 

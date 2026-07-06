@@ -10,7 +10,7 @@ const VIEW_MAP = {
   FAQ: "faq",
 };
 
-export default function ZenithNav({ currentView, onNavigate, onRegisterClick, user }) {
+export default function ZenithNav({ currentView, onNavigate, onRegisterClick, onLoginClick, user }) {
   return (
     <nav className="border-b border-white/5 bg-[#0d0d1a] px-6 h-14 flex items-center justify-between sticky top-0 z-40">
       <div className="flex items-center gap-2">
@@ -44,12 +44,20 @@ export default function ZenithNav({ currentView, onNavigate, onRegisterClick, us
           {user.username}
         </button>
       ) : (
-        <button
-          onClick={onRegisterClick}
-          className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
-        >
-          Create Account
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onLoginClick}
+            className="text-white/60 hover:text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors border border-white/10 hover:border-white/20"
+          >
+            Sign In
+          </button>
+          <button
+            onClick={onRegisterClick}
+            className="flex items-center gap-2 bg-violet-600 hover:bg-violet-500 text-white text-sm font-medium px-4 py-2 rounded-lg transition-colors"
+          >
+            Create Account
+          </button>
+        </div>
       )}
     </nav>
   );
