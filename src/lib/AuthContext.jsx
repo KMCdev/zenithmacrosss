@@ -4,6 +4,8 @@ import React, { createContext, useState, useContext, useEffect } from 'react';
 
 import { appParams } from '@/lib/app-params';
 
+import axios from 'axios';
+
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
