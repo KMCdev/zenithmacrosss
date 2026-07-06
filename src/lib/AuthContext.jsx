@@ -1,10 +1,28 @@
-const db = globalThis.__B44_DB__ || { auth:{ isAuthenticated: async()=>false, me: async()=>null }, entities:new Proxy({}, { get:()=>({ filter:async()=>[], get:async()=>null, create:async()=>({}), update:async()=>({}), delete:async()=>({}) }) }), integrations:{ Core:{ UploadFile:async()=>({ file_url:'' }) } } };
-
-import React, { createContext, useState, useContext, useEffect } from 'react';
-
+import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { appParams } from '@/lib/app-params';
+// import { createAxiosClient } from '@/lib/api'; // <-- IMPORT YOUR CUSTOM CLIENT HERE
 
-import axios from 'axios';
+// 1. Added missing 'logout' and 'redirectToLogin' to the mock to prevent crashes
+const db = globalThis.__B44_DB__ || { 
+  auth: { 
+    isAuthenticated: async () => false, 
+    me: async () => null,
+    logout: () => {}, 
+    redirectToLogin: () => {}
+  }, 
+  entities: new Proxy({}, { 
+    get: () => ({ 
+      filter: async () => [], 
+      get: async () => null, 
+      create: async () => ({}), 
+      update: async () => ({}), 
+      delete: async () => ({}) 
+    }) 
+  }), 
+  integrations: { 
+    Core: { UploadFile: async () => ({ file_url: '' }) } 
+  } 
+};
 
 const AuthContext = createContext();
 
@@ -15,33 +33,54 @@ export const AuthProvider = ({ children }) => {
   const [isLoadingPublicSettings, setIsLoadingPublicSettings] = useState(true);
   const [authError, setAuthError] = useState(null);
   const [authChecked, setAuthChecked] = useState(false);
-  const [appPublicSettings, setAppPublicSettings] = useState(null); // Contains only { id, public_settings }
+  const [appPublicSettings, setAppPublicSettings] = useState(null);
 
-  useEffect(() => {
-    checkAppState();
+  const checkUserAuth = useCallback(async () => {
+    try {
+      setIsLoadingAuth(true);
+      const currentUser = await db.auth.me();
+      setUser(currentUser);
+      setIsAuthenticated(true);
+      setIsLoadingAuth(false);
+      setAuthChecked(true);
+    } catch (error) {
+      console.error('User auth check failed:', error);
+      setIsLoadingAuth(false);
+      setIsAuthenticated(false);
+      setAuthChecked(true);
+      
+      // 2. Safe check for both standard and Axios error shapes
+      const status = error.response?.status || error.status;
+      if (status === 401 || status === 403) {
+        setAuthError({
+          type: 'auth_required',
+          message: 'Authentication required'
+        });
+      }
+    }
   }, []);
 
-  const checkAppState = async () => {
+  const checkAppState = useCallback(async () => {
     try {
       setIsLoadingPublicSettings(true);
       setAuthError(null);
       
-      // First, check app public settings (with token if available)
-      // This will tell us if auth is required, user not registered, etc.
       const appClient = createAxiosClient({
         baseURL: `/api/apps/public`,
         headers: {
           'X-App-Id': appParams.appId
         },
-        token: appParams.token, // Include token if available
+        token: appParams.token, 
         interceptResponses: true
       });
       
       try {
-        const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
+        // 3. Ensuring we extract .data if your client doesn't automatically unwrap it
+        const response = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
+        const publicSettings = response.data || response; 
+        
         setAppPublicSettings(publicSettings);
         
-        // If we got the app public settings successfully, check if user is authenticated
         if (appParams.token) {
           await checkUserAuth();
         } else {
@@ -53,9 +92,12 @@ export const AuthProvider = ({ children }) => {
       } catch (appError) {
         console.error('App state check failed:', appError);
         
-        // Handle app-level errors
-        if (appError.status === 403 && appError.data?.extra_data?.reason) {
-          const reason = appError.data.extra_data.reason;
+        // 4. Safely handle Axios error structures (using .response)
+        const status = appError.response?.status || appError.status;
+        const errorData = appError.response?.data || appError.data;
+
+        if (status === 403 && errorData?.extra_data?.reason) {
+          const reason = errorData.extra_data.reason;
           if (reason === 'auth_required') {
             setAuthError({
               type: 'auth_required',
@@ -90,48 +132,25 @@ export const AuthProvider = ({ children }) => {
       setIsLoadingPublicSettings(false);
       setIsLoadingAuth(false);
     }
-  };
+  }, [checkUserAuth]);
 
-  const checkUserAuth = async () => {
-    try {
-      // Now check if the user is authenticated
-      setIsLoadingAuth(true);
-      const currentUser = await db.auth.me();
-      setUser(currentUser);
-      setIsAuthenticated(true);
-      setIsLoadingAuth(false);
-      setAuthChecked(true);
-    } catch (error) {
-      console.error('User auth check failed:', error);
-      setIsLoadingAuth(false);
-      setIsAuthenticated(false);
-      setAuthChecked(true);
-      
-      // If user auth fails, it might be an expired token
-      if (error.status === 401 || error.status === 403) {
-        setAuthError({
-          type: 'auth_required',
-          message: 'Authentication required'
-        });
-      }
-    }
-  };
+  // 5. checkAppState is now safely wrapped in useCallback to prevent hook warnings
+  useEffect(() => {
+    checkAppState();
+  }, [checkAppState]);
 
   const logout = (shouldRedirect = true) => {
     setUser(null);
     setIsAuthenticated(false);
     
     if (shouldRedirect) {
-      // Use the SDK's logout method which handles token cleanup and redirect
       db.auth.logout(window.location.href);
     } else {
-      // Just remove the token without redirect
       db.auth.logout();
     }
   };
 
   const navigateToLogin = () => {
-    // Use the SDK's redirectToLogin method
     db.auth.redirectToLogin(window.location.href);
   };
 
