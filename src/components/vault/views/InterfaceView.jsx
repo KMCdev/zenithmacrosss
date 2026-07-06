@@ -7,19 +7,19 @@ import { X } from "lucide-react";
 // To change images: replace the URLs below with your own image URLs.
 // You can upload images to any image host (Imgur, Cloudinary, etc.) and paste the direct URL here.
 const IMAGES = [
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/4882cc100_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/89f36f5ff_image.png",
+"https://imgur.com/FkrQ6Un",
+"https://imgur.com/EqjkcZq",
 // New images from the second batch:
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/dad469b5a_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/476d226e9_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/9c385c398_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/b16b4268d_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/e0b9acf4c_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/597491c27_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/8366bdae3_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/bf5862512_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/1f7ad7624_image.png",
-"https://media.db.com/images/public/6a479ca749b4b3e0734dfc59/8e1599dd4_image.png"];
+"https://imgur.com/hjsXCD5",
+"https://imgur.com/fr3tmRu",
+"https://imgur.com/UwA5xg1",
+"https://imgur.com/Tgm5Pwy",
+"https://imgur.com/tnTfjyJ",
+"https://imgur.com/5Tc8Tbq",
+"https://imgur.com/0yCnaS6",
+"https://imgur.com/DlWaEsl",
+"https://imgur.com/ljllqzg",
+"https://imgur.com/A5RbFHJ"];
 
 export default function InterfaceView() {
   const [lightbox, setLightbox] = useState(null);
