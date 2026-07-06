@@ -1,14 +1,46 @@
 import React, { createContext, useState, useContext, useEffect, useCallback } from 'react';
 import { appParams } from '@/lib/app-params';
-// import { createAxiosClient } from '@/lib/api'; // <-- IMPORT YOUR CUSTOM CLIENT HERE
+import axios from 'axios';
 
-// 1. Added missing 'logout' and 'redirectToLogin' to the mock to prevent crashes
+// 1. Custom Axios Client (inlined so you don't need to install or create extra files)
+const createAxiosClient = ({ baseURL, headers = {}, token, interceptResponses }) => {
+  const config = {
+    baseURL,
+    headers: { ...headers },
+  };
+
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+
+  const client = axios.create(config);
+
+  if (interceptResponses) {
+    client.interceptors.response.use(
+      (response) => response.data,
+      (error) => {
+        const customError = new Error(error.message);
+        if (error.response) {
+          customError.status = error.response.status;
+          customError.data = error.response.data;
+        } else {
+          customError.status = 500;
+        }
+        return Promise.reject(customError);
+      }
+    );
+  }
+
+  return client;
+};
+
+// 2. Updated DB Mock (now includes logout and redirectToLogin to prevent crashes)
 const db = globalThis.__B44_DB__ || { 
   auth: { 
     isAuthenticated: async () => false, 
     me: async () => null,
     logout: () => {}, 
-    redirectToLogin: () => {}
+    redirectToLogin: () => {} 
   }, 
   entities: new Proxy({}, { 
     get: () => ({ 
@@ -35,6 +67,7 @@ export const AuthProvider = ({ children }) => {
   const [authChecked, setAuthChecked] = useState(false);
   const [appPublicSettings, setAppPublicSettings] = useState(null);
 
+  // Wrapped in useCallback to prevent React warnings
   const checkUserAuth = useCallback(async () => {
     try {
       setIsLoadingAuth(true);
@@ -49,8 +82,7 @@ export const AuthProvider = ({ children }) => {
       setIsAuthenticated(false);
       setAuthChecked(true);
       
-      // 2. Safe check for both standard and Axios error shapes
-      const status = error.response?.status || error.status;
+      const status = error.status || error.response?.status;
       if (status === 401 || status === 403) {
         setAuthError({
           type: 'auth_required',
@@ -60,6 +92,7 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
+  // Wrapped in useCallback to prevent React warnings
   const checkAppState = useCallback(async () => {
     try {
       setIsLoadingPublicSettings(true);
@@ -75,10 +108,7 @@ export const AuthProvider = ({ children }) => {
       });
       
       try {
-        // 3. Ensuring we extract .data if your client doesn't automatically unwrap it
-        const response = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
-        const publicSettings = response.data || response; 
-        
+        const publicSettings = await appClient.get(`/prod/public-settings/by-id/${appParams.appId}`);
         setAppPublicSettings(publicSettings);
         
         if (appParams.token) {
@@ -92,12 +122,8 @@ export const AuthProvider = ({ children }) => {
       } catch (appError) {
         console.error('App state check failed:', appError);
         
-        // 4. Safely handle Axios error structures (using .response)
-        const status = appError.response?.status || appError.status;
-        const errorData = appError.response?.data || appError.data;
-
-        if (status === 403 && errorData?.extra_data?.reason) {
-          const reason = errorData.extra_data.reason;
+        if (appError.status === 403 && appError.data?.extra_data?.reason) {
+          const reason = appError.data.extra_data.reason;
           if (reason === 'auth_required') {
             setAuthError({
               type: 'auth_required',
@@ -134,7 +160,6 @@ export const AuthProvider = ({ children }) => {
     }
   }, [checkUserAuth]);
 
-  // 5. checkAppState is now safely wrapped in useCallback to prevent hook warnings
   useEffect(() => {
     checkAppState();
   }, [checkAppState]);
