@@ -81,13 +81,16 @@ export default function RegisterModal({ onClose, onSuccess, defaultMode = "regis
     setLoading(true);
     try {
       const result = mode === "register" ? await handleRegister() : await handleLogin();
-      if (!result) return;
+      if (!result) {
+        setLoading(false);
+        return;
+      }
+      setLoading(false);
       setDone(true);
       setTimeout(() => onSuccess(result), 1200);
     } catch {
-      setError("Something went wrong. Please try again.");
-    } finally {
       setLoading(false);
+      setError("Something went wrong. Please try again.");
     }
   };
 
