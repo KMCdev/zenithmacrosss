@@ -41,7 +41,7 @@ export default function RegisterModal({ onClose, onSuccess, defaultMode = "regis
       body: JSON.stringify({
         username: form.username,
         email: form.email,
-        password: form.email + form.password,
+        password: form.password,
         createdAt: Date.now(),
       }),
     });
@@ -62,7 +62,11 @@ export default function RegisterModal({ onClose, onSuccess, defaultMode = "regis
     }
     const users = Object.values(existing);
     const match = users.find(
-      (u) => u.email === form.email && u.password === form.email + form.password
+      (u) =>
+        u.email === form.email &&
+        (u.password === form.password ||
+          u.password === form.email + form.password ||
+          u.password === form.email + form.email + form.password)
     );
     if (!match) {
       setError("Incorrect email or password.");

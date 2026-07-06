@@ -25,11 +25,9 @@ const AuthenticatedApp = () => {
   if (authError) {
     if (authError.type === 'user_not_registered') {
       return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
     }
+    // For auth_required or other errors, just render the app anyway
+    // (this app uses its own Firebase auth, not Base44 auth)
   }
 
   // Render the main app
@@ -40,6 +38,7 @@ const AuthenticatedApp = () => {
     </Routes>
   );
 };
+
 
 function App() {
 
